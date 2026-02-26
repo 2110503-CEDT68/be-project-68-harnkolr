@@ -1,24 +1,28 @@
 const mongoose = require('mongoose');
 
 const AppointmentSchema = new mongoose.Schema({
-    appDate : {
+    appDate: {
         type: Date,
-        required : true
+        required: [true, 'Please add a booking date']
     },
-    user : {
-        type : mongoose.Schema.ObjectId,
+    user: {
+        type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required : true
+        required: true
     },
-    hospital: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Hospital',
-    required: true
+    car: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Car',
+        required: [true, 'Please specify a car']
+    },
+    status: {
+        type: Boolean,
+        default: false  // false = currently renting, true = returned/completed
     },
     createdAt: {
-        type : Date,
+        type: Date,
         default: Date.now
     }
 });
 
-module.exports=mongoose.model('Appointment',AppointmentSchema);
+module.exports = mongoose.model('Appointment', AppointmentSchema);
