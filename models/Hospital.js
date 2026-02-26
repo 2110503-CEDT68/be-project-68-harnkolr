@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
 
 const providerSchema = new mongoose.Schema({
-    // --- ข้อมูลผู้ให้บริการ (Provider Info) ---
     name: {
         type: String,
         required: [true, 'Please add a provider name'],
-        // *** สำคัญ: เอา unique: true ออก *** // เพื่อให้ชื่อบริษัทเดิม สามารถลงทะเบียนรถคันที่ 2, 3 ได้
         trim: true,
         maxlength: [50, 'Name cannot be more than 50 characters']
     },
@@ -34,7 +32,7 @@ const providerSchema = new mongoose.Schema({
         required: [true, 'Please add telephone number']
     },
 
-    // --- ข้อมูลรถ (Car Info) ---
+
     model: {
         type: String,
         trim: true,
@@ -46,8 +44,11 @@ const providerSchema = new mongoose.Schema({
     },
     licensePlate: {
         type: String,
+        unique:true,
         required: [true, 'Please add car licensePlate'],
-        //unique: true // ทะเบียนรถห้ามซ้ำกันในระบบ
+        maxlength: [6, 'car licensePlate cannot be more than 6 characters']
+
+        
     },
     priceperday: {
         type: Number,

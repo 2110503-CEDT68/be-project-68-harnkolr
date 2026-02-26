@@ -87,8 +87,14 @@ exports.getHospital = async(req,res,next) => {
 
 exports.createHospital = async(req,res,next) => {
     //console.log(req.body);
+    try{
     const hospital = await Hospital.create(req.body);
     res.status(201).json({success:true , data:hospital});
+    }
+    catch(err){
+                res.status(400).json({success:false});
+
+    }
 };
 
 // pos
