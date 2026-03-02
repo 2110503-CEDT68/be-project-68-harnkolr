@@ -10,7 +10,6 @@ const {
 } = require('../controllers/carProviders');
 const { protect, authorize } = require('../middleware/auth');
 
-// Re-route into cars router
 const carRouter = require('./cars');
 router.use('/:providerId/cars', carRouter);
 

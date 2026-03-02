@@ -54,11 +54,11 @@ app.use(helmet());
 app.use(xss());
 
 
-// const limiter = rateLimit({
-//     windowMs : 10*60*1000,
-//     //max : 100
-// });
-//app.use(limiter);
+ const limiter = rateLimit({
+     windowMs : 10*60*1000,
+     max : 100
+ });
+app.use(limiter);
 app.use(hpp());
 app.use(cors());
 

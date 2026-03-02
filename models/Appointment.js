@@ -17,7 +17,7 @@ const AppointmentSchema = new mongoose.Schema({
     },
     status: {
         type: Boolean,
-        default: false  // false = currently renting, true = returned/completed
+        default: false  // false = กำลังถูกจอง, true = ถูกคืนแล้ว
     },
     createdAt: {
         type: Date,

@@ -36,7 +36,6 @@ const carProviderSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-// Virtual populate — get all cars under this provider
 carProviderSchema.virtual('cars', {
     ref: 'Car',
     localField: '_id',

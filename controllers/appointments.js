@@ -5,23 +5,21 @@ const Car = require('../models/Car');
 // @route GET /api/v1/appointments
 // @access Private
 exports.getAppointments = async (req, res, next) => {
+    let query;
+
+    if (req.user.role !== 'admin') {
+        query = Appointment.find({ user: req.user.id });
+    } else {
+        query = Appointment.find();
+    }
+
+    query = query.populate({
+        path: 'car',
+        select: 'brand model licensePlate priceperday',
+        populate: { path: 'provider', select: 'name address tel' }
+    });
+
     try {
-        let query;
-
-        if (req.user.role !== 'admin') {
-            // Regular user — only see their own
-            query = Appointment.find({ user: req.user.id });
-        } else {
-            // Admin — see all
-            query = Appointment.find();
-        }
-
-        query = query.populate({
-            path: 'car',
-            select: 'brand model licensePlate priceperday',
-            populate: { path: 'provider', select: 'name address tel' }
-        });
-
         const appointments = await query;
         res.status(200).json({
             success: true,
@@ -49,7 +47,6 @@ exports.getAppointment = async (req, res, next) => {
             return res.status(404).json({ success: false, message: `No appointment with id ${req.params.id}` });
         }
 
-        // Non-admin can only view their own
         if (appointment.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ success: false, message: 'Not authorized to view this appointment' });
         }
@@ -68,7 +65,6 @@ exports.addAppointment = async (req, res, next) => {
     try {
         req.body.user = req.user.id;
 
-        // Check that the selected car exists and is available
         const car = await Car.findById(req.body.car);
         if (!car) {
             return res.status(404).json({ success: false, message: `No car with id ${req.body.car}` });
@@ -77,12 +73,10 @@ exports.addAppointment = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'This car is currently unavailable' });
         }
 
-        // Enforce 3-booking limit for regular users:
-        // Count only appointments where status = false (still renting / not yet returned)
         if (req.user.role !== 'admin') {
             const activeAppointments = await Appointment.find({
                 user: req.user.id,
-                status: false   // false = currently renting
+                status: false 
             });
 
             if (activeAppointments.length >= 3) {
@@ -112,7 +106,6 @@ exports.updateAppointment = async (req, res, next) => {
             return res.status(404).json({ success: false, message: `No appointment with id ${req.params.id}` });
         }
 
-        // Non-admin can only edit their own
         if (appointment.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ success: false, message: `User ${req.user.id} is not authorized to update this appointment` });
         }
@@ -140,7 +133,6 @@ exports.deleteAppointment = async (req, res, next) => {
             return res.status(404).json({ success: false, message: `No appointment with id ${req.params.id}` });
         }
 
-        // Non-admin can only delete their own
         if (appointment.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({
                 success: false,
